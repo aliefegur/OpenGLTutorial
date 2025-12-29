@@ -1,4 +1,5 @@
 #include <iostream>
+#include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
 int main(int argc, char** argv)
@@ -19,15 +20,18 @@ int main(int argc, char** argv)
 
     glfwMakeContextCurrent(window);
 
+    if (!gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress)))
+    {
+        std::cout << "Failed to initialize GLAD!" << std::endl;
+        glfwDestroyWindow(window);
+        glfwTerminate();
+        return -1;
+    }
+
     while (!glfwWindowShouldClose(window))
     {
+        glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
-
-        glBegin(GL_TRIANGLES);
-        glVertex2f(-0.5f, -0.5f);
-        glVertex2f( 0.5f, -0.5f);
-        glVertex2f( 0.0f, 0.5f);
-        glEnd();
 
         glfwPollEvents();
         glfwSwapBuffers(window);
