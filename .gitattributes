@@ -1,2 +1,2 @@
 # GLFW external library
-libs/glfw-3.4/** linguist-vendored
+libs/** linguist-vendored
