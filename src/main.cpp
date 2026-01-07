@@ -2,6 +2,8 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
+#include "Utils/File.h"
+
 int main(int argc, char** argv)
 {
     if (!glfwInit())
@@ -28,10 +30,30 @@ int main(int argc, char** argv)
         return -1;
     }
 
+    std::string vertexShaderSource = File::Read("shaders/vertexShader.glsl");
+    std::string fragmentSource = File::Read("shaders/fragmentShader.glsl");
+
+    unsigned int vertexShader = glCreateShader(GL_VERTEX_SHADER);
+    const char* vsSource = vertexShaderSource.c_str();
+    glShaderSource(vertexShader, 1, &vsSource, nullptr);
+    glCompileShader(vertexShader);
+
+    unsigned int fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+    const char* fsSource = fragmentSource.c_str();
+    glShaderSource(fragmentShader, 1, &fsSource, nullptr);
+    glCompileShader(fragmentShader);
+
+    unsigned int shaderProgram = glCreateProgram();
+    glAttachShader(shaderProgram, vertexShader);
+    glAttachShader(shaderProgram, fragmentShader);
+    glLinkProgram(shaderProgram);
+
     while (!glfwWindowShouldClose(window))
     {
         glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
+
+        glUseProgram(shaderProgram);
 
         glfwPollEvents();
         glfwSwapBuffers(window);

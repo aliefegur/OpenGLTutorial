@@ -5,7 +5,9 @@ project(OpenGLTutorial)
 add_subdirectory(libs/glfw-3.4)
 add_subdirectory(libs/glad)
 
-add_executable(${PROJECT_NAME} src/main.cpp)
+add_executable(${PROJECT_NAME} src/main.cpp
+        src/Utils/File.h
+        src/Utils/File.cpp)
 target_link_libraries(${PROJECT_NAME} glfw glad)
 
 if (UNIX)
@@ -14,3 +16,7 @@ if (UNIX)
 elseif (WIN32)
     target_link_libraries(${PROJECT_NAME} opengl32)
 endif ()
+
+add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+        ${PROJECT_SOURCE_DIR}/assets/ ${CMAKE_BINARY_DIR})
