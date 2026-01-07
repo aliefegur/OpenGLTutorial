@@ -7,7 +7,8 @@ add_subdirectory(libs/glad)
 
 add_executable(${PROJECT_NAME} src/main.cpp
         src/Utils/File.h
-        src/Utils/File.cpp)
+        src/Utils/File.cpp
+        src/Core/Vertex.h)
 target_link_libraries(${PROJECT_NAME} glfw glad)
 
 if (UNIX)

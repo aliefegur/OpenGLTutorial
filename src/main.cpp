@@ -3,6 +3,7 @@
 #include <GLFW/glfw3.h>
 
 #include "Utils/File.h"
+#include "Core/Vertex.h"
 
 int main(int argc, char** argv)
 {
@@ -48,12 +49,32 @@ int main(int argc, char** argv)
     glAttachShader(shaderProgram, fragmentShader);
     glLinkProgram(shaderProgram);
 
+    const Vertex vertices[] = {
+        { -0.5, -0.5, 0.0f },
+        { 0.5f, -0.5f, 0.0f },
+        { 0.0f, 0.5f, 0.0f }
+    };
+
+    unsigned int VBO;
+    glGenBuffers(1, &VBO);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+    unsigned int VAO;
+    glGenVertexArrays(1, &VAO);
+    glBindVertexArray(VAO);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (const void*)0);
+    glEnableVertexAttribArray(0);
+
     while (!glfwWindowShouldClose(window))
     {
         glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
         glUseProgram(shaderProgram);
+        glBindVertexArray(VAO);
+        
+        glDrawArrays(GL_TRIANGLES, 0, std::size(vertices));
 
         glfwPollEvents();
         glfwSwapBuffers(window);
