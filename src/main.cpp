@@ -2,6 +2,7 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
+#include "Core/ShaderProgram.h"
 #include "Utils/File.h"
 #include "Core/Vertex.h"
 
@@ -31,28 +32,12 @@ int main(int argc, char** argv)
         return -1;
     }
 
-    std::string vertexShaderSource = File::Read("shaders/vertexShader.glsl");
-    std::string fragmentSource = File::Read("shaders/fragmentShader.glsl");
-
-    unsigned int vertexShader = glCreateShader(GL_VERTEX_SHADER);
-    const char* vsSource = vertexShaderSource.c_str();
-    glShaderSource(vertexShader, 1, &vsSource, nullptr);
-    glCompileShader(vertexShader);
-
-    unsigned int fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-    const char* fsSource = fragmentSource.c_str();
-    glShaderSource(fragmentShader, 1, &fsSource, nullptr);
-    glCompileShader(fragmentShader);
-
-    unsigned int shaderProgram = glCreateProgram();
-    glAttachShader(shaderProgram, vertexShader);
-    glAttachShader(shaderProgram, fragmentShader);
-    glLinkProgram(shaderProgram);
+    ShaderProgram shaderProgram("shaders/vertexShader.glsl", "shaders/fragmentShader.glsl");
 
     const Vertex vertices[] = {
-        { -0.5, -0.5, 0.0f },
-        { 0.5f, -0.5f, 0.0f },
-        { 0.0f, 0.5f, 0.0f }
+        { -0.5, -0.5, 0.0f, 1.0f, 0.0f, 0.0f },
+        { 0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f },
+        { 0.0f, 0.5f, 0.0f, 0.0f, 0.0f, 1.0f }
     };
 
     unsigned int VBO;
@@ -64,14 +49,16 @@ int main(int argc, char** argv)
     glGenVertexArrays(1, &VAO);
     glBindVertexArray(VAO);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (const void*)0);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (const void*)(3 * sizeof(float)));
     glEnableVertexAttribArray(0);
+    glEnableVertexAttribArray(1);
 
     while (!glfwWindowShouldClose(window))
     {
-        glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
+        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        glUseProgram(shaderProgram);
+        shaderProgram.Use();
         glBindVertexArray(VAO);
         
         glDrawArrays(GL_TRIANGLES, 0, std::size(vertices));
