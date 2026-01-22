@@ -10,6 +10,9 @@ public:
 
     void Use() const;
 
+    unsigned int GetID() const;
+    operator unsigned int() const;
+
 private:
     void AttachShader(const std::string& file, unsigned int type) const;
     void LinkProgram() const;

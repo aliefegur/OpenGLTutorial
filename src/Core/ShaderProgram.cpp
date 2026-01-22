@@ -23,6 +23,16 @@ void ShaderProgram::Use() const
     glUseProgram(m_Id);
 }
 
+unsigned int ShaderProgram::GetID() const
+{
+    return m_Id;
+}
+
+ShaderProgram::operator unsigned int() const
+{
+	return m_Id;
+}
+
 void ShaderProgram::AttachShader(const std::string& file, unsigned int type) const
 {
     unsigned int shader = glCreateShader(type);
