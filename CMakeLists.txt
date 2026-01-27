@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.20)
 
 project(OpenGLTutorial)
 
-add_subdirectory(libs/glfw-3.4)
+add_subdirectory(libs/glfw)
 add_subdirectory(libs/glad)
 
 add_executable(${PROJECT_NAME} src/main.cpp
