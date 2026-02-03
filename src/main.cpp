@@ -2,6 +2,8 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <cmath>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
 #include "Core/ShaderProgram.h"
 #include "Utils/File.h"
@@ -56,9 +58,29 @@ int main(int argc, char** argv)
     glEnableVertexAttribArray(0);
     glEnableVertexAttribArray(1);
 
+    // Transformation data
+    glm::mat4 model{ 1.0f };
+    glm::vec3 position{ 0.0f };
+    glm::vec3 scale{ 1.0f };
+    float rotation = 0.0f;
+
     while (!glfwWindowShouldClose(window))
     {
         double time = glfwGetTime();
+
+        // Update transformations
+        position.x = sinf(static_cast<float>(time));
+        scale.x = scale.y = scale.z = abs(cosf(static_cast<float>(time)));
+        rotation = static_cast<float>(time) * 50.0f;
+
+        // Calculate model matrix
+        model = glm::scale(
+            glm::rotate(
+                glm::translate(glm::mat4(1.0f), position), 
+                glm::radians(rotation), { 0.0f, 0.0f, 1.0f }
+            ),
+            scale
+        );
 
         // Update shape color
         color[0] = std::sin(time);
@@ -69,6 +91,10 @@ int main(int argc, char** argv)
         glClear(GL_COLOR_BUFFER_BIT);
 
         shaderProgram.Use();
+
+        // Pass model matrix to the uniform
+        unsigned uModelLocation = glGetUniformLocation(shaderProgram, "uModel");
+        glUniformMatrix4fv(uModelLocation, 1, GL_FALSE, &model[0][0]);
 
         // Pass color to the uniform in shader
         unsigned int uColorLocation = glGetUniformLocation(shaderProgram, "uColor");

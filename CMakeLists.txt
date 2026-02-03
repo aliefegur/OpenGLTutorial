@@ -4,6 +4,7 @@ project(OpenGLTutorial)
 
 add_subdirectory(libs/glfw)
 add_subdirectory(libs/glad)
+add_subdirectory(libs/glm)
 
 add_executable(${PROJECT_NAME} src/main.cpp
         src/Utils/File.h
@@ -11,7 +12,7 @@ add_executable(${PROJECT_NAME} src/main.cpp
         src/Core/Vertex.h
         src/Core/ShaderProgram.cpp
         src/Core/ShaderProgram.h)
-target_link_libraries(${PROJECT_NAME} glfw glad)
+target_link_libraries(${PROJECT_NAME} glfw glad glm::glm)
 
 if (UNIX)
     find_package(OpenGL REQUIRED)
