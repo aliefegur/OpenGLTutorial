@@ -1,7 +1,11 @@
 #pragma once
 
+#include <glm/vec2.hpp>
+#include <glm/vec3.hpp>
+
 struct Vertex
 {
-    float posX, posY, posZ;
-    float colorR, colorG, colorB;
+    glm::vec3 Position;
+    glm::vec3 Color;
+    glm::vec2 TexCoord;
 };
