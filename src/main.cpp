@@ -40,7 +40,13 @@ int main(int argc, char** argv)
     constexpr Vertex vertices[] = {
         { {-0.5, -0.5, 0.0f}, {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f} },
         { {0.5f, -0.5f, 0.0f}, {1.0f, 1.0f, 1.0f}, {1.0f, 0.0f} },
-        { {0.0f, 0.5f, 0.0f}, {1.0f, 1.0f, 1.0f}, {0.5f, 1.0f} }
+        { {0.5f, 0.5f, 0.0f}, {1.0f, 1.0f, 1.0f}, {1.0f, 1.0f} },
+        { {-0.5f, 0.5f, 0.0f}, {1.0f, 1.0f, 1.0f}, {0.0f, 1.0f} },
+    };
+
+    constexpr unsigned short indices[] = {
+        0, 1, 2,    // Lower triangle
+        0, 2, 3     // Upper triangle
     };
 
     float color[] = { 0.0f, 0.0f, 0.0f };
@@ -49,6 +55,11 @@ int main(int argc, char** argv)
     glGenBuffers(1, &VBO);
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+    unsigned int EBO;
+    glGenBuffers(1, &EBO);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
     unsigned int VAO;
     glGenVertexArrays(1, &VAO);
@@ -128,8 +139,12 @@ int main(int argc, char** argv)
         glBindVertexArray(VAO);
 
         glBindTexture(GL_TEXTURE_2D, texture);
-        
-        glDrawArrays(GL_TRIANGLES, 0, std::size(vertices));
+
+        // Wireframe
+        //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+        glDrawElements(GL_TRIANGLES, std::size(indices), GL_UNSIGNED_SHORT, reinterpret_cast<void*>(0));
 
         glfwPollEvents();
         glfwSwapBuffers(window);
