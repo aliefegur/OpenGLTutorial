@@ -7,12 +7,7 @@ add_subdirectory(libs/glad)
 add_subdirectory(libs/glm)
 add_subdirectory(libs/stb)
 
-add_executable(${PROJECT_NAME} src/main.cpp
-        src/Utils/File.h
-        src/Utils/File.cpp
-        src/Core/Vertex.h
-        src/Core/ShaderProgram.cpp
-        src/Core/ShaderProgram.h)
+add_executable(${PROJECT_NAME} "src/main.cpp" "src/Utils/File.h" "src/Utils/File.cpp" "src/Core/Vertex.h" "src/Core/ShaderProgram.cpp" "src/Core/ShaderProgram.h" "src/Core/Viewport.h" "src/Core/Viewport.cpp" "src/Core/OrthographicCamera.h" "src/Core/OrthographicCamera.cpp")
 target_link_libraries(${PROJECT_NAME} glfw glad glm::glm stb)
 
 if (UNIX)
