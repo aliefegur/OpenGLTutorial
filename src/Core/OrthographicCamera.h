@@ -14,6 +14,7 @@ public:
 	float GetRotation() const;
 	float GetNear() const;
 	float GetFar() const;
+    float GetSize() const;
 
 	void Translate(const glm::vec3& translation);
 	void Rotate(float angle);
@@ -21,6 +22,7 @@ public:
 	void SetRotation(float rotation);
 	void SetNear(float near);
 	void SetFar(float far);
+    void SetSize(float size);
 
 private:
 	glm::mat4 m_ViewProjectionMatrix;

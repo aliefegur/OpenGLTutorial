@@ -8,10 +8,11 @@ out vec3 vColor;
 out vec2 vTexCoord;
 
 uniform mat4 uModel;
+uniform mat4 uViewProjection;
 
 void main()
 {
     vColor = aColor;
     vTexCoord = aTextureCoord;
-    gl_Position = uModel * vec4(aPosition, 1.0f);
+    gl_Position = uViewProjection * uModel * vec4(aPosition, 1.0f);
 }

@@ -17,8 +17,8 @@ void OrthographicCamera::Update(float aspectRatio)
 	glm::mat4 projectionMatrix = glm::ortho(
 		-m_Size * aspectRatio / 2.0f,
 		 m_Size * aspectRatio / 2.0f,
-		-m_Size,
-		 m_Size
+		-m_Size / 2.0f, m_Size / 2.0f,
+		m_Near, m_Far
 	);
 	
 	m_ViewProjectionMatrix = projectionMatrix * viewMatrix;
@@ -49,6 +49,11 @@ float OrthographicCamera::GetFar() const
 	return m_Far;
 }
 
+float OrthographicCamera::GetSize() const
+{
+    return m_Size;
+}
+
 void OrthographicCamera::Translate(const glm::vec3& translation)
 {
 	m_Position += translation;
@@ -77,4 +82,9 @@ void OrthographicCamera::SetNear(float near)
 void OrthographicCamera::SetFar(float far)
 {
 	m_Far = far;
+}
+
+void OrthographicCamera::SetSize(float size)
+{
+    m_Size = size;
 }

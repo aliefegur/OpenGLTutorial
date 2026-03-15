@@ -4,10 +4,17 @@
 #include <cmath>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 #include <stb/stb_image.h>
 
 #include "Core/ShaderProgram.h"
 #include "Core/Vertex.h"
+#include "Core/Viewport.h"
+#include "Core/OrthographicCamera.h"
+
+Viewport viewport;
+
+void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 
 int main(int argc, char** argv)
 {
@@ -34,6 +41,10 @@ int main(int argc, char** argv)
         glfwTerminate();
         return -1;
     }
+
+    glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+
+    viewport.Update(0, 0, 800, 600);
 
     const ShaderProgram shaderProgram("shaders/vertexShader.glsl", "shaders/fragmentShader.glsl");
 
@@ -100,15 +111,25 @@ int main(int argc, char** argv)
     glm::vec3 scale{ 1.0f };
     float rotation = 0.0f;
 
+    OrthographicCamera camera;
+    camera.SetNear(0.0f);
+    camera.SetSize(2.0f);
+    camera.SetRotation(30.0f);
+
     while (!glfwWindowShouldClose(window))
     {
         const auto time = static_cast<float>(glfwGetTime());
+
+        camera.SetPosition({cosf(time), sinf(time), 0.0f});
 
         // Update transformations
         /*position.x = sinf(time);
         scale.x = scale.y = scale.z = fabsf(cosf(time));
         rotation = time * 50.0f;
 */
+        // Update camera
+        camera.Update(viewport.GetAspectRatio());
+
         // Calculate model matrix
         glm::mat4 model = glm::scale(
             glm::rotate(
@@ -128,9 +149,13 @@ int main(int argc, char** argv)
 
         shaderProgram.Use();
 
+        // Pass combined camera matrix to the shader
+        const int uViewProjection = glGetUniformLocation(shaderProgram, "uViewProjection");
+        glUniformMatrix4fv(uViewProjection, 1, GL_FALSE, glm::value_ptr(camera.GetCombinedMatrix()));
+
         // Pass model matrix to the uniform
         const int uModelLocation = glGetUniformLocation(shaderProgram, "uModel");
-        glUniformMatrix4fv(uModelLocation, 1, GL_FALSE, &model[0][0]);
+        glUniformMatrix4fv(uModelLocation, 1, GL_FALSE, glm::value_ptr(model));
 
         // Pass color to the uniform in shader
         const int uColorLocation = glGetUniformLocation(shaderProgram, "uColor");
@@ -152,4 +177,9 @@ int main(int argc, char** argv)
 
     glfwTerminate();
     return 0;
+}
+
+void framebuffer_size_callback(GLFWwindow* window, int width, int height)
+{
+    viewport.Update(0, 0, width, height);
 }
