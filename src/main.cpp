@@ -13,8 +13,10 @@
 #include "Core/OrthographicCamera.h"
 
 Viewport viewport;
+glm::vec3 cameraDirection = glm::vec3(0.0f);
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
+void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
 
 int main(int argc, char** argv)
 {
@@ -43,6 +45,7 @@ int main(int argc, char** argv)
     }
 
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+    glfwSetKeyCallback(window, key_callback);
 
     viewport.Update(0, 0, 800, 600);
 
@@ -114,13 +117,18 @@ int main(int argc, char** argv)
     OrthographicCamera camera;
     camera.SetNear(0.0f);
     camera.SetSize(2.0f);
-    camera.SetRotation(30.0f);
+    //camera.SetRotation(30.0f);
+
+    auto lastTime = static_cast<float>(glfwGetTime());
 
     while (!glfwWindowShouldClose(window))
     {
         const auto time = static_cast<float>(glfwGetTime());
+        const auto deltaTime = time - lastTime;
+        lastTime = time;
 
-        camera.SetPosition({cosf(time), sinf(time), 0.0f});
+        //camera.SetPosition({cosf(time), sinf(ti/me), 0.0f});
+        camera.Translate(cameraDirection * deltaTime);
 
         // Update transformations
         /*position.x = sinf(time);
@@ -182,4 +190,19 @@ int main(int argc, char** argv)
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
     viewport.Update(0, 0, width, height);
+}
+
+void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
+{
+    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) glfwSetWindowShouldClose(window, 1);
+
+    if (key == GLFW_KEY_W && action == GLFW_PRESS) cameraDirection.y = 1.0f;
+    else if (key == GLFW_KEY_S && action == GLFW_PRESS) cameraDirection.y = -1.0f;
+    if (key == GLFW_KEY_A && action == GLFW_PRESS) cameraDirection.x = -1.0f;
+    else if (key == GLFW_KEY_D && action == GLFW_PRESS) cameraDirection.x = 1.0f;
+
+    if (key == GLFW_KEY_W && action == GLFW_RELEASE && cameraDirection.y == 1.0f) cameraDirection.y = 0.0;
+    if (key == GLFW_KEY_S && action == GLFW_RELEASE && cameraDirection.y == -1.0f) cameraDirection.y = 0.0;
+    if (key == GLFW_KEY_A && action == GLFW_RELEASE && cameraDirection.x == -1.0f) cameraDirection.x = 0.0;
+    if (key == GLFW_KEY_D && action == GLFW_RELEASE && cameraDirection.x == 1.0f) cameraDirection.x = 0.0;
 }
